@@ -4,6 +4,8 @@ let onScreen = false
 const loc = $("#search-input").val().trim()
 
 
+storeHistory()
+
 function storeLocation(trueLoc){
     
     localStorage.setItem(trueLoc, trueLoc)
@@ -27,9 +29,9 @@ function printLocation(history){
     $("#history").empty()
     
     for(let i =0; i < history.length; i++){
-        $("#history").append(`<button type="button" class=" col-12  btn btn-secondary btn-lg my-2" id="location">${history[i]}</button>`)
-
+        $("#history").append(`<button id="location" type="submit" class=" col-12  btn btn-secondary btn-lg my-2">${history[i]}</button>`)
     }
+    
 }
 function clearData(){
     
@@ -96,25 +98,34 @@ function  fetchWeatherData(){
     })
 }
 
-$(document).ready(function(){
-    storeHistory()
 
-    $("#location").on("click", function(e) {
+    
+    $("#search-button").on("click",  function(e) {
         e.preventDefault()
-        console.log("test")
-        const loc = $("#search-input").val($(this).attr('id'))
+        if(!$("#search-input").val()){
+            return
+        }
         clearData()
-        
         fetchWeatherData()
     })
-})
 
-$("#search-button").on("click",  function(e) {
-    
-    clearData()
-    e.preventDefault()
-    fetchWeatherData()
-})
+    $(document).on('click', "#location", function(e){
+        e.preventDefault()
+        console.log("test")
+        $("#search-input").val($(this).text())
+        clearData()
+        fetchWeatherData()
+    })
+
+
+
+
+
+
+
+
+
+
 
 
 
