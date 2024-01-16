@@ -6,17 +6,13 @@ A 5-day weather forecast using a weather server API
 
 
 - [Deployment](#deployment)
-- [Usage](#usage)
+- [Features](#features)
 - [Credits](#credits)
 - [License](#license)
 
 ## Deployment
 
 Application deployed via the live GitHub URL: https://davouj.github.io/Weather-App/.
-
-
-## Usage
-
 
 
 ![Gif of page](/assets/images/page.gif)
