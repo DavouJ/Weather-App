@@ -24,11 +24,10 @@ function storeHistory(){
 }
 
 function printLocation(history){
-   
     $("#history").empty()
     
     for(let i =0; i < history.length; i++){
-        $("#history").append(`<button type="button" class=" col-12  btn btn-primary btn-lg my-2" id="location">${history[i]}</button>`)
+        $("#history").append(`<button type="button" class=" col-12  btn btn-secondary btn-lg my-2" id="location">${history[i]}</button>`)
 
     }
 }
@@ -36,6 +35,7 @@ function clearData(){
     
     $("#location-heading").text("")
     for(let i = 0; i < 5; i++){
+        $("ul").eq(i).empty()
         $("ul").eq(i).empty()
         $("ul").eq(i).empty()
         $("ul").eq(i).empty()
@@ -56,7 +56,7 @@ function  fetchWeatherData(){
     })
     // After data comes back from the request
     .then(function (data) {
-        const queryWeather = `https://api.openweathermap.org/data/2.5/forecast?lat=${data[0].lat}&lon=${data[0].lon}&appid=${key}`
+        const queryWeather = `https://api.openweathermap.org/data/2.5/forecast?lat=${data[0].lat}&lon=${data[0].lon}&appid=${key}&units=metric`
         
         
         fetch(queryWeather)
@@ -85,10 +85,11 @@ function  fetchWeatherData(){
         .then(function (forecast) {
             
             for(let i = 0; i < 5; i++){
+                console.log(forecast[i].humidity)
                 $("ul").eq(i).append(`<li id = "desc" class = ""><img id = icon src = "${forecast[i].icon}" alt="Weather icon">${forecast[i].description}</li>`)
-                $("ul").eq(i).append(`<li id = "temp" class = "">${forecast[i].temp}</li>` )
-                $("ul").eq(i).append(`<li id = "wind" class = "">${forecast[i].wind}</li>` )
-                $("ul").eq(i).append(`<li id = "humidity" class = "">${forecast[i].humidity}</li>` )
+                $("ul").eq(i).append(`<li id = "temp" class = "">Temp: ${forecast[i].temp}</li>` )
+                $("ul").eq(i).append(`<li id = "wind" class = ""> Wind: ${forecast[i].wind}</li>` )
+                $("ul").eq(i).append(`<li id = "humidity" class = "">Humidity: ${forecast[i].humidity}</li>` )
             }
             onScreen = true
         })
@@ -97,6 +98,7 @@ function  fetchWeatherData(){
 
 $(document).ready(function(){
     storeHistory()
+
     $("#location").on("click", function(e) {
         e.preventDefault()
         console.log("test")
