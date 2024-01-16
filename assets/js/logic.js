@@ -75,23 +75,26 @@ function  fetchWeatherData(){
             
             for(let i = 0; i < 5; i++){
                 forecast[i] = {
+                    date: data.list[i*8].dt,
                     description: data.list[i*8].weather[0].main,
                     icon: "http://openweathermap.org/img/w/" + data.list[i*8].weather[0].icon + ".png",
                     temp: data.list[i*8].main.temp,
                     wind: data.list[i*8].wind.speed,
                     humidity: data.list[i*8].main.humidity
                 }
+            console.log(forecast[i])
             }
             return forecast
         })
         .then(function (forecast) {
             
             for(let i = 0; i < 5; i++){
-                console.log(forecast[i].humidity)
+                
+                $("h7").eq(i).text(dayjs.unix(forecast[i].date).format('DD/MM/YYYY'))
                 $("ul").eq(i).append(`<li id = "desc" class = ""><img id = icon src = "${forecast[i].icon}" alt="Weather icon">${forecast[i].description}</li>`)
-                $("ul").eq(i).append(`<li id = "temp" class = "">Temp: ${forecast[i].temp}</li>` )
-                $("ul").eq(i).append(`<li id = "wind" class = ""> Wind: ${forecast[i].wind}</li>` )
-                $("ul").eq(i).append(`<li id = "humidity" class = "">Humidity: ${forecast[i].humidity}</li>` )
+                $("ul").eq(i).append(`<li id = "temp" class = "">Temp: ${forecast[i].temp} °C</li>` )
+                $("ul").eq(i).append(`<li id = "wind" class = ""> Wind: ${forecast[i].wind} MPH</li>` )
+                $("ul").eq(i).append(`<li id = "humidity" class = "">Humidity: ${forecast[i].humidity} %</li>` )
             }
             onScreen = true
         })
