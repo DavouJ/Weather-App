@@ -1,17 +1,18 @@
 const key = "6e6e40eb16f7d51c7d15623d48bfecbc"
 let forecast = []
-let onScreen = false
 const loc = $("#search-input").val().trim()
 
 
 storeHistory()
 
+// Function to store the current search location in localStorage
 function storeLocation(trueLoc){
     
     localStorage.setItem(trueLoc, trueLoc)
     storeHistory()
 }
 
+// Function to retrieve and display search history from localStorage
 function storeHistory(){
     var history = [],
         keys = Object.keys(localStorage),
@@ -25,6 +26,7 @@ function storeHistory(){
     printLocation(history)
 }
 
+// Function to display search history on the page
 function printLocation(history){
     $("#history").empty()
     
@@ -33,6 +35,8 @@ function printLocation(history){
     }
     
 }
+
+// Function to clear weather data from the page
 function clearData(){
     
     $("#location-heading").text("")
@@ -45,22 +49,40 @@ function clearData(){
     }
 }
 
+// Function to fetch weather data from OpenWeatherMap API
 function  fetchWeatherData(){
     
-    $("#weather-section").attr('class', "col-md-9 ")
+    // Set the weather section class to display on screen
+    $("#today").attr('class', "row  border ")
     
+    // Get the user's desired location from the search input
     const loc = $("#search-input").val().trim()
+
+     // Construct the API endpoint for geocoding
     const queryGeocode = `http://api.openweathermap.org/geo/1.0/direct?q=${loc}&appid=${key}`
 
+    // Fetch geocoding data
     fetch(queryGeocode)
     .then(function (response) {
         return response.json();
     })
     // After data comes back from the request
     .then(function (data) {
-        const queryWeather = `https://api.openweathermap.org/data/2.5/forecast?lat=${data[0].lat}&lon=${data[0].lon}&appid=${key}&units=metric`
+        var queryWeather
+        try{ 
+            console.log(data[0].lat)
+            // Construct the API endpoint for weather forecast
+            queryWeather = `https://api.openweathermap.org/data/2.5/forecast?lat=${data[0].lat}&lon=${data[0].lon}&appid=${key}&units=metric`
+        }
+        catch (error){
+            console.error(error)
+            $("#location-heading").attr("class", "text-danger")
+            $("#location-heading").text("Enter a valid location")
+            $("#forecast").attr('class', "row  justify-content-evenly hide")
+            //return null
+        }
         
-        
+        // Fetch weather forecast data
         fetch(queryWeather)
         .then(function (response) {
             return response.json();
@@ -68,11 +90,17 @@ function  fetchWeatherData(){
         // After data comes back from the request
         .then(function (data) {
             const currentDate = dayjs().format('DD/MM/YYYY')
-            //console.log(data)
+            
             const trueLoc = data.city.name
+            
+            // Store the location in localStorage
             storeLocation(trueLoc)
+
+            // Display the location heading
+            $("#location-heading").attr("class", "")
             $("#location-heading").text(trueLoc +" - (" + currentDate + ")")
             
+            // Extract forecast data for the next 5 days
             for(let i = 0; i < 5; i++){
                 forecast[i] = {
                     date: data.list[i*8].dt,
@@ -84,10 +112,13 @@ function  fetchWeatherData(){
                 }
             console.log(forecast[i])
             }
+
+            // Return the forecast data
             return forecast
         })
         .then(function (forecast) {
-            
+            $("#forecast").attr('class', "row  justify-content-evenly ")
+            // Display the forecast data on the page
             for(let i = 0; i < 5; i++){
                 
                 $("h7").eq(i).text(dayjs.unix(forecast[i].date).format('DD/MM/YYYY'))
@@ -96,13 +127,13 @@ function  fetchWeatherData(){
                 $("ul").eq(i).append(`<li id = "wind" class = ""> Wind: ${forecast[i].wind} MPH</li>` )
                 $("ul").eq(i).append(`<li id = "humidity" class = "">Humidity: ${forecast[i].humidity} %</li>` )
             }
-            onScreen = true
+            
         })
     })
 }
 
 
-    
+    // Event listener for the search button click
     $("#search-button").on("click",  function(e) {
         e.preventDefault()
         if(!$("#search-input").val()){
@@ -112,6 +143,7 @@ function  fetchWeatherData(){
         fetchWeatherData()
     })
 
+    // Event listener for location history button click
     $(document).on('click', "#location", function(e){
         e.preventDefault()
         console.log("test")
