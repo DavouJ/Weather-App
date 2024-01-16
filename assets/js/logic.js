@@ -1,5 +1,4 @@
 const key = "6e6e40eb16f7d51c7d15623d48bfecbc"
-let history = []
 let forecast = []
 let onScreen = false
 const loc = $("#search-input").val().trim()
@@ -7,20 +6,36 @@ const loc = $("#search-input").val().trim()
 
 function storeLocation(trueLoc){
     
-    localStorage.setItem(history.push(trueLoc), trueLoc)
-
-    console.log(localStorage)
-
-    for(let i = 1; i < 6; i++){
-        
-    }
-
+    localStorage.setItem(trueLoc, trueLoc)
+    storeHistory()
 }
 
+function storeHistory(){
+    var history = [],
+        keys = Object.keys(localStorage),
+        i = 0, key;
+
+    for (; key = keys[i]; i++) {
+        history.push(localStorage.getItem(key));
+    }
+
+    
+    printLocation(history)
+}
+
+function printLocation(history){
+   
+    $("#history").empty()
+    
+    for(let i =0; i < history.length; i++){
+        $("#history").append(`<button type="button" class=" col-12  btn btn-primary btn-lg my-2" id="location">${history[i]}</button>`)
+
+    }
+}
 function clearData(){
     
     $("#location-heading").text("")
-    for(let i = 1; i < 6; i++){
+    for(let i = 0; i < 5; i++){
         $("ul").eq(i).empty()
         $("ul").eq(i).empty()
         $("ul").eq(i).empty()
@@ -34,7 +49,6 @@ function  fetchWeatherData(){
     
     const loc = $("#search-input").val().trim()
     const queryGeocode = `http://api.openweathermap.org/geo/1.0/direct?q=${loc}&appid=${key}`
-    
 
     fetch(queryGeocode)
     .then(function (response) {
@@ -70,11 +84,11 @@ function  fetchWeatherData(){
         })
         .then(function (forecast) {
             
-            for(let i = 1; i < 6; i++){
-                $("ul").eq(i).append(`<li id = "desc" class = ""><img id = icon src = "${forecast[i-1].icon}" alt="Weather icon">${forecast[i-1].description}</li>`)
-                $("ul").eq(i).append(`<li id = "temp" class = "">${forecast[i-1].temp}</li>` )
-                $("ul").eq(i).append(`<li id = "wind" class = "">${forecast[i-1].wind}</li>` )
-                $("ul").eq(i).append(`<li id = "humidity" class = "">${forecast[i-1].humidity}</li>` )
+            for(let i = 0; i < 5; i++){
+                $("ul").eq(i).append(`<li id = "desc" class = ""><img id = icon src = "${forecast[i].icon}" alt="Weather icon">${forecast[i].description}</li>`)
+                $("ul").eq(i).append(`<li id = "temp" class = "">${forecast[i].temp}</li>` )
+                $("ul").eq(i).append(`<li id = "wind" class = "">${forecast[i].wind}</li>` )
+                $("ul").eq(i).append(`<li id = "humidity" class = "">${forecast[i].humidity}</li>` )
             }
             onScreen = true
         })
@@ -82,7 +96,15 @@ function  fetchWeatherData(){
 }
 
 $(document).ready(function(){
-
+    storeHistory()
+    $("#location").on("click", function(e) {
+        e.preventDefault()
+        console.log("test")
+        const loc = $("#search-input").val($(this).attr('id'))
+        clearData()
+        
+        fetchWeatherData()
+    })
 })
 
 $("#search-button").on("click",  function(e) {
@@ -91,4 +113,6 @@ $("#search-button").on("click",  function(e) {
     e.preventDefault()
     fetchWeatherData()
 })
+
+
 
