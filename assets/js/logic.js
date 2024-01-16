@@ -6,9 +6,14 @@ const loc = $("#search-input").val().trim()
 
 
 function storeLocation(trueLoc){
-    forecast.push(trueLoc)
-    console.log(forecast)
-    localStorage.setItem("Loc", trueLoc)
+    
+    localStorage.setItem(history.push(trueLoc), trueLoc)
+
+    console.log(localStorage)
+
+    for(let i = 1; i < 6; i++){
+        
+    }
 
 }
 
